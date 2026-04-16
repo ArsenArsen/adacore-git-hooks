@@ -1,0 +1,95 @@
+[hooks]
+	from-domain = gcc.gnu.org
+	mailinglist = true
+
+	# We do not want to force a maximum line length in commit
+	# revision logs, as they get in the way of copy-pasting
+	# debugging session, error messages, logs, etc.
+	max-rh-line-length = 0
+
+	# We allow a 0.5MiB email diff maximum.
+	max-email-diff-size = 524288
+
+	# Reject merge commits on a certain number of branches:
+	#  - on master: We request that people rebase their changes
+	#    before pushing instead (merge commits tend to confuse
+	#    git newcomers).
+	#  - on release: We apply the same policy to release branches
+	#    as we have on master.
+	reject-merge-commits = refs/heads/master,refs/heads/trunk,refs/heads/releases/.*
+
+	# The URL where we can inspect the commit, inserted in the commit
+	# notification email, and also copy sent to the file-commit-cmd.
+	commit-url = "https://gcc.gnu.org/g:%(rev)s"
+
+	# This style checker does nothing at present.
+	# style-checker = /git/gcc.git/hooks-bin/style_checker
+
+	# Send a copy to bugzilla if a commit has a PR number in it.
+	# The script is a wrapper around
+	# /sourceware/infra/bin/email-to-bugzilla.
+	# file-commit-cmd = "/git/gcc.git/hooks-bin/email-to-bugzilla-filtered"
+
+	# Work around <https://github.com/AdaCore/git-hooks/issues/9>
+	# to allow larger merges.
+	max-commit-emails = 5000
+
+	# Allow deliberate merges to use the default commit message.
+	# Branches that do not allow merge commits are listed in
+	# reject-merge-commits.
+	disable-merge-commit-checks = true
+
+	# Do not send emails for commits that are already in the
+	# repository being added to development branches or user or
+	# vendor branches (through merges or rebases).
+	email-new-commits-only = refs/heads/devel/.*
+	email-new-commits-only = refs/users/.*
+	email-new-commits-only = refs/vendors/.*
+
+	# GCC-specific ref naming conventions for user and vendor
+	# branches.
+	branch-ref-namespace = refs/users/[^/]*/heads/.*
+	branch-ref-namespace = refs/vendors/[^/]*/heads/.*
+
+	# GCC-specific ref naming conventions for user and vendor
+	# tags.
+	tag-ref-namespace = refs/users/[^/]*/tags/.*
+	tag-ref-namespace = refs/vendors/[^/]*/tags/.*
+
+	# Branch deletion is disabled by default.
+	restrict-branch-deletion = true
+
+	# Branch deletion is allowed for user and vendor branches.
+	allow-delete-branch = refs/users/[^/]*/heads/.*
+	allow-delete-branch = refs/vendors/[^/]*/heads/.*
+
+	# Non-fast-forward updates are allowed in the user and vendor
+	# namespaces.
+	allow-non-fast-forward = refs/users/.*
+	allow-non-fast-forward = refs/vendors/.*
+
+	# Message to give for rejected branch deletion.
+	rejected-branch-deletion-tip = Branch deletion is only allowed for user and vendor branches.  If another branch was created by mistake, contact an administrator to delete it on the server with git update-ref.  If a development branch is dead, also contact an administrator to move it under refs/dead/heads/ rather than deleting it.
+
+	# Commit messages should not be restricted to ISO-8859-15.
+	no-rh-character-range-check = true
+
+	# Custom checker script for each new commit of each ref being
+	# updated.  This makes several checks on the commit message,
+	# including for ChangeLog formatting and contents.
+	# commit-extra-checker = /git/gcc.git/hooks-bin/commit_checker
+
+	# Custom checker script for ref updates.  This checks for
+	# branch naming conventions and not introducing new references
+	# to the git-svn history.
+	# update-hook = /git/gcc.git/hooks-bin/update_hook
+
+	# Custom email formatter.  This inserts GCC monotonically
+	# increasing commit ids in the commit emails.
+	# commit-email-formatter = /git/gcc.git/hooks-bin/commit_email_formatter
+
+	# For GCC/Rust development that happens outside of GCC proper,
+	# <https://rust-gcc.github.io/>, the Git commit messages
+	# don't always adhere to standard GCC style; see
+	# <https://github.com/Rust-GCC/gccrs/issues/143>.
+	no-precommit-check = refs/heads/devel/rust/.*

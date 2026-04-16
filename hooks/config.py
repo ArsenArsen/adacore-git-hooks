@@ -93,6 +93,7 @@ GIT_CONFIG_OPTS = {
     "hooks.no-precommit-check": {"default": (), "type": tuple},
     "hooks.no-rh-character-range-check": {"default": False, "type": bool},
     "hooks.no-rh-style-checks": {"default": (), "type": tuple},
+    "hooks.no-rh-near-revert-check": {"default": False, "type": bool},
     "hooks.no-style-checks": {"default": (), "type": tuple},
     "hooks.pre-receive-hook": {"default": None},
     "hooks.post-receive-hook": {"default": None},

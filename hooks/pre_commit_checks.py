@@ -309,6 +309,29 @@ def check_missing_ticket_number(commit):
     )
 
 
+def reject_almost_reversions(commit):
+    """Raise InvalidUpdate if the commit's revlog contains "This reverts
+    commit" in it.
+
+    The GCC ChangeLog scripts expect a line that contains that sentence to also
+    contain a reference to the commit being reverted.  If this line is altered,
+    therefore, they will fail.
+
+    PARAMETERS
+        commit: A CommitInfo object corresponding to the commit being checked.
+    """
+    if git_config("hooks.no-rh-near-revert-check"):
+        return
+
+    if "This reverts commit" in commit.raw_revlog:
+        raise InvalidUpdate(
+            "Commit %s looks like it was intended as a revert." % commit.rev,
+            "",
+            "When reverting, you should leave the 'This reverts commit'",
+            "line unaltered.",
+        )
+
+
 def check_revision_history(commit):
     """Apply pre-commit checks to the commit's revision history.
 
@@ -321,6 +344,7 @@ def check_revision_history(commit):
         return
 
     # Various checks on the revision history...
+    reject_almost_reversions(commit)
     ensure_iso_8859_15_only(commit)
     ensure_empty_line_after_subject(commit)
     reject_lines_too_long(commit)

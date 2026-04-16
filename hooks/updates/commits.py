@@ -4,6 +4,19 @@ from git import git, empty_tree_rev, diff_tree
 from io_utils import safe_decode
 from updates.mailinglists import expanded_mailing_list
 from utils import debug
+import re
+
+
+_REVERT_COMMIT_RE = re.compile(
+    r"^This reverts commit (?P<hash>[0-9a-f]+)\.$",
+    re.M
+)
+"""A regex that matches the same revert lines as ``revert_regex`` does in
+``contrib/gcc-changelog/git_commit.py``.
+
+Note that this regex is matched against an entire body of a commit rather than
+each line in it, though.
+"""
 
 
 class CommitInfo(object):
@@ -235,11 +248,7 @@ class CommitInfo(object):
         revision log of such commits, hoping that a user is not deleting
         them afterwards.
         """
-        if "This reverts commit" in self.raw_revlog:
-            return True
-
-        # No recognizable pattern. Probably not a revert commit.
-        return False
+        return bool(_REVERT_COMMIT_RE.search(self.raw_revlog));
 
     @classmethod
     def __all_files_from_commit_rev(cls, rev):
